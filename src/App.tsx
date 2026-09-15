@@ -1,12 +1,12 @@
-import { Box, Typography } from '@mui/material'
+import { Navigate, Route, Routes } from 'react-router-dom'
+import { GrantsPage } from './pages/GrantsPage'
 
 function App() {
   return (
-    <Box sx={{ minHeight: '100%', p: 4 }}>
-      <Typography variant="h4" component="h1">
-        GrantMatch
-      </Typography>
-    </Box>
+    <Routes>
+      <Route path="/" element={<Navigate to="/grants" replace />} />
+      <Route path="/grants" element={<GrantsPage />} />
+    </Routes>
   )
 }
 
