@@ -5,12 +5,15 @@ import { getMatches, runMatching } from '../../api/matches'
 import type { Match } from '../../api/matches'
 import { getGrants } from '../../api/grants'
 import type { Grant } from '../../api/grants'
+import { getBusiness } from '../../api/businesses'
+import type { Business } from '../../api/businesses'
 import { getStoredBusinessId } from '../../utils/storage'
 import { MatchAccordion } from './MatchAccordion'
 
 export function MatchesPage() {
   const businessId = useMemo(() => getStoredBusinessId(), [])
 
+  const [business, setBusiness] = useState<Business | null>(null)
   const [grants, setGrants] = useState<Grant[] | null>(null)
   const [matches, setMatches] = useState<Match[] | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
@@ -19,8 +22,9 @@ export function MatchesPage() {
 
   useEffect(() => {
     if (!businessId) return
-    Promise.all([getGrants(), getMatches(businessId)])
-      .then(([grantsData, matchesData]) => {
+    Promise.all([getBusiness(businessId), getGrants(), getMatches(businessId)])
+      .then(([businessData, grantsData, matchesData]) => {
+        setBusiness(businessData)
         setGrants(grantsData)
         setMatches(matchesData)
       })
@@ -64,6 +68,12 @@ export function MatchesPage() {
       {businessId && (
         <>
           <Box sx={{ mb: 3 }}>
+            {business && (
+              <Typography color="text.secondary" sx={{ mb: 1 }}>
+                מציג תוצאות עבור: <strong>{business.business_name}</strong> (ח.פ{' '}
+                {business.registration_number})
+              </Typography>
+            )}
             <Button variant="contained" onClick={handleRun} disabled={running}>
               {running ? 'בודק התאמה...' : 'הרץ בדיקת התאמה'}
             </Button>
