@@ -12,6 +12,18 @@ export type CriterionOperator = 'LTE' | 'GTE' | 'EQ' | 'IN' | 'MANUAL'
 
 export type CriterionValueType = 'NUMBER' | 'TEXT' | 'LIST'
 
+export type MatchStatus = 'CLOSED' | 'NEEDS_REVIEW' | 'NOT_ELIGIBLE' | 'NEEDS_DATA' | 'ELIGIBLE'
+
+export interface CriterionDetail {
+  key: string
+  label: string
+  actual: string | null
+  required: string | null
+  is_met: boolean | null
+  is_automatic: boolean
+  gap: string | null
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -71,11 +83,22 @@ export interface Database {
         Relationships: []
       }
       business_grants_matches: {
-        // Table is currently empty; columns not modeled yet — not read or
-        // written by this app until the matching engine exists.
-        Row: Record<string, unknown>
-        Insert: Record<string, unknown>
-        Update: Record<string, unknown>
+        Row: {
+          id: number
+          business_id: number
+          grant_id: number
+          status: MatchStatus
+          is_eligible: boolean | null
+          match_score: number | null
+          criteria_detail: CriterionDetail[]
+          failed_count: number
+          unknown_count: number
+          manual_count: number
+          match_reason: string
+          checked_at: string
+        }
+        Insert: Database['public']['Tables']['business_grants_matches']['Row']
+        Update: Partial<Database['public']['Tables']['business_grants_matches']['Row']>
         Relationships: []
       }
       criteria_catalog: {
@@ -107,6 +130,11 @@ export interface Database {
       }
     }
     Views: Record<string, never>
-    Functions: Record<string, never>
+    Functions: {
+      calculate_matches: {
+        Args: { p_business_id: number }
+        Returns: { grant_id: number; grant_title: string; status: MatchStatus; score: number | null }[]
+      }
+    }
   }
 }

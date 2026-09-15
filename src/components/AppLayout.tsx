@@ -4,6 +4,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 const navItems = [
   { path: '/grants', label: 'קטלוג מענקים' },
   { path: '/profile', label: 'פרופיל עסק' },
+  { path: '/matches', label: 'התאמות למענקים' },
 ]
 
 export function AppLayout() {
