@@ -298,7 +298,7 @@ BEGIN
     END LOOP; -- סוף מעבר על כל המענקים
 
     RETURN QUERY
-        SELECT m.grant_id, g.title, m.status, m.match_score
+        SELECT m.grant_id, g.title::text, m.status::text, m.match_score
         FROM business_grants_matches m
         JOIN grants g ON g.id = m.grant_id
         WHERE m.business_id = p_business_id
